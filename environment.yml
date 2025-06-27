@@ -1,0 +1,9 @@
+name: ellipsoids
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - flowermd
+  - jupyter
+  - signac
+  - row
