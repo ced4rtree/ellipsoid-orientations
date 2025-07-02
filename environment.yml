@@ -5,5 +5,4 @@ channels:
 dependencies:
   - flowermd
   - jupyter
-  - signac
-  - row
+  - rowan
