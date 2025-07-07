@@ -29,9 +29,11 @@ PROGRESS_BAR_WIDTH = 20
 
 R_CUT = 10.0
 EPSILON = 1.0
+LPAR=1.0
+LPERP=0.5
 
 MAX_DIST = 5.0
-MIN_DIST = 0.1
+MIN_DIST = 0.5
 TIME_STRING = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 OUTPUT_DIR = 'output/' + TIME_STRING + '/'
 
@@ -93,7 +95,7 @@ def simulate(
         gsd_file_name = OUTPUT_DIR + f'{name}-{i}.gsd'
         log_file_name = OUTPUT_DIR + f'{name}-{i}.txt'
         
-        ellipsoid = EllipsoidChain(num_mols=2, lpar=1.0, bead_mass=1.0, lengths=1)
+        ellipsoid = EllipsoidChain(num_mols=2, lpar=LPAR, bead_mass=1.0, lengths=1)
         system = Pack(density=0.1*u.Unit("nm**-3"), molecules=ellipsoid)
 
         # scaled to be MIN_DIST and MAX_DIST inclusive while using only
@@ -117,8 +119,8 @@ def simulate(
         
         ff = EllipsoidForcefield(
             epsilon=EPSILON,
-            lpar=1.0,
-            lperp=0.5,
+            lpar=LPAR,
+            lperp=LPERP,
             r_cut=R_CUT,
             bond_r0=0.1,
             bond_k=100
@@ -141,7 +143,7 @@ def simulate(
             dt=0.001
         )
         
-        ellipsoid_sim.run_NVT(n_steps=0, kT=1.0, tau_kt=1.0, thermalize_particles=False)
+        ellipsoid_sim.run_NVT(n_steps=1, kT=1.0, tau_kt=1.0, thermalize_particles=False)
         
         ellipsoid_sim.flush_writers()
         
@@ -149,8 +151,8 @@ def simulate(
             gsd_file=gsd_file_name,
             new_file=gsd_file_name.replace('.gsd', '-ovito.gsd'),
             ellipsoid_types='R',
-            lpar=1.0,
-            lperp=0.5,
+            lpar=LPAR,
+            lperp=LPERP,
         )
         
         log = np.genfromtxt(log_file_name, names=True)
@@ -166,13 +168,13 @@ def simulate(
         sys.stdout.write(f"[%-{PROGRESS_BAR_WIDTH}s] %d%%\n\n" % ('='*int(i/(RESOLUTION/PROGRESS_BAR_WIDTH)), 100/RESOLUTION*i))
         sys.stdout.flush()
 
-    return radius, potential
+    return radius, potential[0], potential[1]
 
 if __name__ == '__main__':
     # ||
     parallel = simulate(
         Direction.Y,
-        "parallel",
+        "parallel_0",
     )
     parallel_radius = np.append(parallel_radius, parallel[0])
     parallel_potential = np.append(parallel_potential, parallel[1])
@@ -180,7 +182,7 @@ if __name__ == '__main__':
     # <><>
     parallel_long = simulate(
         Direction.X,
-        "parallel_long",
+        "parallel_long_0",
     )
     parallel_long_radius = np.append(parallel_long_radius, parallel_long[0])
     parallel_long_potential = np.append(parallel_long_potential, parallel_long[1])
@@ -188,12 +190,37 @@ if __name__ == '__main__':
     # |<>
     perpendicular = simulate(
         Direction.Y,
-        "perpendicular",
+        "perpendicular_0",
         rotation = np.array([0, 0, np.pi/2]),
         orientations = np.array([[1, 0, 0, 0], rotate_quaternion([1, 0, 0, 0], np.pi/2, 'z')]),
     )
     perpendicular_radius = np.append(perpendicular_radius, perpendicular[0])
     perpendicular_potential = np.append(perpendicular_potential, perpendicular[1])
+
+    parallel = simulate(
+        Direction.Y,
+        "parallel_1",
+    )
+    parallel_radius = np.append(parallel_radius, parallel[0])
+    parallel_potential = np.append(parallel_potential, parallel[2])
+    
+    # <><>
+    parallel_long = simulate(
+        Direction.X,
+        "parallel_long_1",
+    )
+    parallel_long_radius = np.append(parallel_long_radius, parallel_long[0])
+    parallel_long_potential = np.append(parallel_long_potential, parallel_long[2])
+    
+    # |<>
+    perpendicular = simulate(
+        Direction.Y,
+        "perpendicular_1",
+        rotation = np.array([0, 0, np.pi/2]),
+        orientations = np.array([[1, 0, 0, 0], rotate_quaternion([1, 0, 0, 0], np.pi/2, 'z')]),
+    )
+    perpendicular_radius = np.append(perpendicular_radius, perpendicular[0])
+    perpendicular_potential = np.append(perpendicular_potential, perpendicular[2])
 
     print(f"parallel radius && parallel_long radius: {parallel_radius == parallel_long_radius}")
     print(f"perpendicular radius && parallel_long radius: {perpendicular_radius == parallel_long_radius}")
