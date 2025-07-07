@@ -185,7 +185,7 @@ if __name__ == '__main__':
     
     # <><>
     parallel_long = simulate(
-        Direction.X,
+        Direction.Z,
         "parallel_long",
     )
     parallel_long_radius = np.append(parallel_long_radius, parallel_long[0])
@@ -195,7 +195,7 @@ if __name__ == '__main__':
     perpendicular = simulate(
         Direction.Y,
         "perpendicular",
-        orientation = rotate_quaternion([1, 0, 0, 0], np.pi/2, 'z'),
+        orientation = rotate_quaternion([1, 0, 0, 0], np.pi/2, 'x'),
     )
     perpendicular_radius = np.append(perpendicular_radius, perpendicular[0])
     perpendicular_potential = np.append(perpendicular_potential, perpendicular[1])
