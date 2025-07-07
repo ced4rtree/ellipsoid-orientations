@@ -25,7 +25,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-RESOLUTION = 100
+RESOLUTION = 200
 PROGRESS_BAR_WIDTH = 20
 
 R_CUT = 10.0
@@ -33,7 +33,7 @@ EPSILON = 1.0
 LPAR=1.0
 LPERP=0.5
 
-MAX_DIST = 5.0
+MAX_DIST = 4.0
 MIN_DIST = 0.1
 TIME_STRING = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 OUTPUT_DIR = 'output/' + TIME_STRING + '/'
@@ -233,7 +233,7 @@ if __name__ == '__main__':
     plt.title('Potential Energy vs. Radius')
     plt.xlabel('Radius')
     plt.ylabel('Potential Energy')
-    plt.ylim(-EPSILON-1, 2)
+    plt.ylim(-EPSILON-0.5, 0.5)
     plt.legend()
     plt.savefig(f'{OUTPUT_DIR}potential-energy-limited.png')
     plt.close()
@@ -244,7 +244,7 @@ if __name__ == '__main__':
     plt.title('Potential Energy Per Particle vs. Radius')
     plt.xlabel('Radius')
     plt.ylabel('Potential Energy Per Particle')
-    plt.ylim(-EPSILON-1, 2)
+    plt.ylim(-EPSILON-0.5, 0.5)
     plt.legend()
     plt.savefig(f'{OUTPUT_DIR}potential-energy-limited-per.png')
     plt.close()
