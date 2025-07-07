@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # compilation command on NixOS:
-# bash -c 'conda-shell -c "conda activate flowermd && python ellipsoids.py"'
+# bash -c 'conda-shell -c "conda activate ellipsoids && python ellipsoids.py"'
 
 from flowermd.base import Pack, Lattice, Simulation
 from flowermd.library import EllipsoidForcefield, EllipsoidChain, PPS, OPLS_AA_PPS
