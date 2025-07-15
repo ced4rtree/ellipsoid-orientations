@@ -89,9 +89,9 @@ def ellipsoid_to_origin(ellipsoid):
     bond_from_center = np.linalg.norm(bond - center)
 
     ellipsoid.children[0].pos = np.array([0.0, 0.0, 0.0])
-    ellipsoid.children[1].pos = np.array([bond_from_center, 0.0, 0.0])
-    ellipsoid.children[2].pos = np.array([-lpar, 0.0, 0.0])
-    ellipsoid.children[3].pos = np.array([lpar, 0.0, 0.0])
+    ellipsoid.children[1].pos = np.array([0.0, 0.0, bond_from_center])
+    ellipsoid.children[2].pos = np.array([0.0, 0.0, lpar])
+    ellipsoid.children[3].pos = np.array([0.0, 0.0, -lpar])
 
 def ellipsoid_gsd(gsd_file, new_file, ellipsoid_types, lpar, lperp):
     """Add needed information to GSD file to visualize ellipsoids.
