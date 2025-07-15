@@ -24,7 +24,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-RESOLUTION = 200
+RESOLUTION = 20
 PROGRESS_BAR_WIDTH = 20
 
 R_CUT = 10.0
@@ -129,6 +129,21 @@ def simulate(
             system.hoomd_snapshot,
             orientations=orientations
         )
+
+        if orientations is not None:
+            # initialize orientation to correct dimensions
+            rigid_frame.particles.orientation = [orientations[0]]
+
+            # rigid body orientations
+            if len(orientations) > 1:
+                for orientation in orientations[1:]:
+                    rigid_frame.particles.orientation = np.vstack((rigid_frame.particles.orientation, orientation))
+
+            # individual particle orientations
+            for orientation in orientations:
+                for foo in range(4): # one orientation per particle that matches rigid body orientation
+                    rigid_frame.particles.orientation = np.vstack((rigid_frame.particles.orientation, orientation))
+
 
         print(f"Rigid frame positions after: {rigid_frame.particles.position}\n")
         

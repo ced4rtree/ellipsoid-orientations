@@ -122,9 +122,9 @@ def ellipsoid_gsd(gsd_file, new_file, ellipsoid_types, lpar, lperp):
                     if ptype == ellipsoid_types or ptype in ellipsoid_types:
                         shapes_dict = {
                             "type": "Ellipsoid",
-                            "a": lpar,
+                            "a": lperp,
                             "b": lperp,
-                            "c": lperp,
+                            "c": lpar,
                         }
                     else:
                         shapes_dict = {"type": "Sphere", "diameter": 0.001}
@@ -191,25 +191,9 @@ def create_rigid_ellipsoid_chain(snapshot, orientations = None):
         (rigid_moi, np.zeros((snapshot.particles.N, 3)))
     )
     
-    if orientations is not None:
-        # initialize orientation to correct dimensions
-        rigid_frame.particles.orientation = [orientations[0]]
-
-        # rigid body orientations
-        if len(orientations) > 1:
-            for orientation in orientations[1:]:
-                rigid_frame.particles.orientation = np.vstack((rigid_frame.particles.orientation, orientation))
-
-        # individual particle orientations
-        for orientation in orientations:
-            for i in range(4): # one orientation per particle that matches rigid body orientation
-                rigid_frame.particles.orientation = np.vstack((rigid_frame.particles.orientation, orientation))
-
-        print(f"ORIENTATIONS: {rigid_frame.particles.orientation}")
-    else:
-        rigid_frame.particles.orientation = [[1, 0, 0, 0]] * (
-            n_rigid + snapshot.particles.N
-        )
+    rigid_frame.particles.orientation = [[1, 0, 0, 0]] * (
+        n_rigid + snapshot.particles.N
+    )
         
     rigid_frame.particles.body = np.concatenate(
         (
